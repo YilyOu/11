@@ -10,7 +10,7 @@ show_help() {
 选项:
   -y, --you-domain <域名>        你的域名或IP (例如: example.com)
   -r, --r-domain <域名>          反代 Emby 的域名 (例如: backend.com)
-  -t, --backend-domain <域名>    后端服务域名 (默认: backend.example.com)
+  -B, --backend-domain <域名>    后端服务域名 (默认: backend.example.com)
   -P, --you-frontend-port <端口>  你的前端访问端口 (默认: 443)
   -p, --r-frontend-port <端口>    反代 Emby 前端端口 (默认: 空)
   -f, --r-http-frontend          反代 Emby 使用 HTTP 作为前端访问 (默认: 否)
@@ -45,7 +45,7 @@ while true; do
     case "$1" in
         -y|--you-domain) you_domain="$2"; shift 2 ;;
         -r|--r-domain) r_domain="$2"; shift 2 ;;
-        -t|--backend-domain) backend_domain="$2"; shift 2 ;;
+        -B|--backend-domain) backend_domain="$2"; shift 2 ;;
         -P|--you-frontend-port) you_frontend_port="$2"; shift 2 ;;
         -p|--r-frontend-port) r_frontend_port="$2"; shift 2 ;;
         -b|--r-http-backend) r_http_backend="yes"; shift ;;
@@ -183,7 +183,7 @@ fi
 
 # 下载并复制 nginx.conf
 echo "下载并复制 nginx 配置文件..."
-curl -o /etc/nginx/nginx.conf https://github.com/YilyOu/11/raw/main/nginx.conf
+curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/YilyOu/Emby_nginx_proxy/main/sakullla/nginx.conf
 
 you_domain_config="$you_domain"
 download_domain_config="p.example.com"
@@ -196,7 +196,7 @@ fi
 
 # 下载并复制 p.example.com.conf 并修改
 echo "下载并创建 $you_domain_config 配置文件..."
-curl -o "$you_domain_config.conf" "https://github.com/YilyOu/11/raw/main/conf.d/$download_domain_config.conf"
+curl -o "$you_domain_config.conf" "https://raw.githubusercontent.com/YilyOu/Emby_nginx_proxy/main/sakullla/conf.d/$download_domain_config.conf"
 
 # 如果 you_frontend_port 不为空， 则替换端口
 if [[ -n "$you_frontend_port" ]]; then
