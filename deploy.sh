@@ -234,6 +234,8 @@ fi
 if [[ "$no_tls" != "yes" ]]; then
     ACME_SH="$HOME/.acme.sh/acme.sh"
 
+sudo systemctl start nginx
+
     # 检查并安装 acme.sh
    echo "检查 acme.sh 是否已安装..."
    if [[ ! -f "$ACME_SH" ]]; then
@@ -272,7 +274,5 @@ fi
 
 echo "重新加载 Nginx..."
 nginx -s reload
-
-sudo systemctl start nginx
 
 echo "反向代理设置完成！"
