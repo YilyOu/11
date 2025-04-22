@@ -9,8 +9,8 @@ show_help() {
 
 选项:
   -y, --you-domain <域名>        你的域名或IP (例如: example.com)
-  -r, --r-domain <域名>          反代 Emby 的域名 (例如: backend.com)
-  -t, --backend-domain <域名>    后端服务域名 (默认: backend.example.com)
+  -r, --r-domain <域名>          反代 Emby 前端域名 (例如: backend.com)
+  -t, --backend-domain <域名>    反代 Emby 后端域名 (默认: backend.example.com)
   -P, --you-frontend-port <端口>  你的前端访问端口 (默认: 443)
   -p, --r-frontend-port <端口>    反代 Emby 前端端口 (默认: 空)
   -f, --r-http-frontend          反代 Emby 使用 HTTP 作为前端访问 (默认: 否)
@@ -32,7 +32,7 @@ r_http_frontend="no"
 no_tls="no"
 
 # 使用 `getopt` 解析参数
-TEMP=$(getopt -o y:r:B:P:p:bfsh --long you-domain:,r-domain:,backend-domain:,you-frontend-port:,r-frontend-port:,r-http-frontend,r-http-backend,no-tls,help -n "$(basename "$0")" -- "$@")
+TEMP=$(getopt -o y:r:t:P:p:bfsh --long you-domain:,r-domain:,backend-domain:,you-frontend-port:,r-frontend-port:,r-http-frontend,r-http-backend,no-tls,help -n "$(basename "$0")" -- "$@")
 
 if [ $? -ne 0 ]; then
     echo "参数解析失败，请检查输入的参数。"
@@ -58,12 +58,12 @@ while true; do
 done
 
 # 交互模式 (如果未提供必要参数)
-if [[ -z "$you_domain" || -z "$r_domain" ]]; then
+if [[ -z "$you_domain" || -z "$r_domain" || -z "$backend_domain" ]]; then
     echo -e "\n--- 交互模式: 配置反向代理 ---"
     echo "请按提示输入参数，或直接按 Enter 使用默认值"
-    read -p "你的域名或者 IP [默认: you.example.com]: " input_you_domain
-    read -p "反代Emby的域名 [默认: r.example.com]: " input_r_domain
-    read -p "后端服务域名 [默认: backend.example.com]: " input_backend_domain
+    [[ -z "$you_domain" ]] && read -p "你的域名或者 IP [默认: you.example.com]: " input_you_domain
+    [[ -z "$r_domain" ]] && read -p "反代 Emby 前端域名 [默认: r.example.com]: " input_r_domain
+    [[ -z "$backend_domain" ]] && read -p "反代 Emby 后端域名 [默认: backend.example.com]: " input_backend_domain
     read -p "你的前端访问端口 [默认: 443]: " input_you_frontend_port
     read -p "反代Emby前端端口 [默认: 空]: " input_r_frontend_port
     read -p "是否使用HTTP连接反代Emby后端? (yes/no) [默认: no]: " input_r_http_backend
@@ -88,9 +88,9 @@ url="${protocol}://${you_domain}:${you_frontend_port}"
 echo -e "\n------ 配置信息 ------"
 echo "🌍 访问地址: ${url}"
 echo "📌 你的域名: ${you_domain}"
-echo "🖥️  你的前端访问端口: ${you_frontend_port}"
-echo "🔄 反代 Emby 的域名: ${r_domain}"
-echo "🔧 后端服务域名: ${backend_domain}"
+echo "🖥️ 你的前端访问端口: ${you_frontend_port}"
+echo "🔄 反代 Emby 前端域名: ${r_domain}"
+echo "🔧 反代 Emby 后端域名: ${backend_domain}"
 echo "🎯 反代 Emby 前端端口: ${r_frontend_port:-未指定}"
 echo "🔗 使用 HTTP 连接反代 Emby 后端: $( [[ "$r_http_backend" == "yes" ]] && echo "✅ 是" || echo "❌ 否" )"
 echo "🛠️  使用 HTTP 连接反代 Emby 前端: $( [[ "$r_http_frontend" == "yes" ]] && echo "✅ 是" || echo "❌ 否" )"
