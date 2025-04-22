@@ -273,4 +273,6 @@ fi
 echo "重新加载 Nginx..."
 nginx -s reload
 
+sudo systemctl start nginx
+
 echo "反向代理设置完成！"
